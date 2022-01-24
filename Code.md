@@ -1,6 +1,20 @@
 # Escafe
 
-```C#
+제가 게임을 만들면서 담당했던 부분은 
+
+1. 메인 메뉴 제작
+2. 인트로 구현
+3. 게임 맵 제작
+4. 문 열림 구현
+5. 인벤토리 구현
+6. 두번째 문 구현
+
+입니다.
+
+맵 제작 총괄 및 메인메뉴 그래픽 부분은 제작이라고 표기했습니다.
+
+- 인트로 부분입니다.
+```C# 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,7 +72,7 @@ public class Intro : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.A)){
             Debug.Log("press A");
-            LimitTime = 0; // a 누르면 설명 사라지면서 바로 신넘어가는거 아쉬워서 넣었음
+            LimitTime = 0;
             text_Skip.text = "S = 게임 시작";
 
         }
@@ -66,3 +80,7 @@ public class Intro : MonoBehaviour
     }
 }
 ```
+유니티에 있는 텍스트 를 if문을 활용해 게임 맵으로 넘어가게 했습니다. 
+게임 맵은 한가지만 두면 재미 요소가 떨어질것 같아 세가지 가능성으로 나누었습니다.
+
+
