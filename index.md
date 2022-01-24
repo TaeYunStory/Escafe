@@ -14,6 +14,8 @@
 맵 제작 총괄 및 메인메뉴 그래픽 부분은 제작이라고 표기했습니다.
 
 - 인트로 부분입니다.
+
+
 ```C# 
 using System.Collections;
 using System.Collections.Generic;
@@ -79,6 +81,7 @@ public class Intro : MonoBehaviour
    
     }
 }
+
 ```
 
 - 문열림 구현 입니다.
