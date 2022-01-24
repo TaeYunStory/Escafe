@@ -31,7 +31,8 @@ public class Intro : MonoBehaviour
 
     //변수가 앞 함수가 뒤
     void Start() {
-        //text_Story.text = "2008년 xx국에서 생체 실험을 한다는 첩보를 듣고 생체 병기 탈환을 위한 침투 작전 중 사로잡히고 말았다. 방송소리에 정신을 차려보니 실험실은 붕괴 중이다. 이곳을 빠져 나가 구출해주러온 요원들과 접선하라!";
+        //text_Story.text = "2008년 xx국에서 생체 실험을 한다는 첩보를 듣고 생체 병기 탈환을 위한 침투 작전 중 사로잡히고 말았다. 
+        방송소리에 정신을 차려보니 실험실은 붕괴 중이다. 이곳을 빠져 나가 구출해주러온 요원들과 접선하라!";
         text_Skip.text = "A = 스토리 스킵";
         Screen.SetResolution(1920, 1080, true);
 
@@ -80,7 +81,235 @@ public class Intro : MonoBehaviour
     }
 }
 ```
-유니티에 있는 텍스트 를 if문을 활용해 게임 맵으로 넘어가게 했습니다. 
-게임 맵은 한가지만 두면 재미 요소가 떨어질것 같아 세가지 가능성으로 나누었습니다.
+
+- 문열림 구현 입니다.
+
+```C# 
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class test : MonoBehaviour
+{
+    AudioSource audiosrcDoor;
+    private Animator animator;
+
+    private void Awake()
+
+    {
+
+        animator = GetComponent<Animator>();
+
+    }
+    private void Start()
+    {
+        audiosrcDoor = GetComponent<AudioSource>();
+        audiosrcDoor.Stop();
+    }
 
 
+
+    public void OnCollisionStay(Collision collision) {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (Input.GetKeyDown(KeyCode.T) && GetKey())
+            {           
+                for (int i = 0; i < Inventory.slots.Length; i++)
+                {
+                    if (Item.ItemType.Key == Inventory.slots[i].item.itemType)
+                    {
+                        Inventory.slots[i].SetSlotCount(-1);
+                        animator.SetTrigger("DoorOpen");
+                        audiosrcDoor.Play();
+                    }
+                }
+
+            }
+        }
+    }
+    public bool GetKey(){
+        
+       
+        for (int i = 0; i < Inventory.slots.Length; i++)
+        {
+          
+            if (Inventory.slots[i] != null && Item.ItemType.Key == Inventory.slots[i].item.itemType)
+            {
+                return true;
+                
+            }
+        }
+        return false;
+    }
+
+   }
+```
+
+- 인벤토리 구현입니다.
+
+인터넷에서 구글링하면서 응용 활용해 보았습니다.
+
+인벤토리 최상 부모 입니다.
+```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Inventory : MonoBehaviour
+{
+
+    [SerializeField]
+    private GameObject go_InventoryBase; 
+    [SerializeField]
+    private GameObject go_SlotsParent;  
+
+    public static Slot[] slots;  
+
+    void Start()
+    {
+        
+        slots = go_SlotsParent.GetComponentsInChildren<Slot>();
+    }
+
+    public void AcquireItem(Item _item, int _count = 1)
+    {
+        if (Item.ItemType.PuzzleONE != _item.itemType)
+        {
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].item != null)  
+                {
+                    if (slots[i].item.itemName == _item.itemName)
+                    {
+                        slots[i].SetSlotCount(_count);
+                        return;
+                    }
+                }
+            }
+        }
+        if (Item.ItemType.PuzzleTWO != _item.itemType)
+        {
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].item != null)
+                {
+                    if (slots[i].item.itemName == _item.itemName)
+                    {
+                        slots[i].SetSlotCount(_count);
+                        return;
+                    }
+                }
+            }
+        }
+        if (Item.ItemType.PuzzleTHREE != _item.itemType)
+        {
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].item != null)
+                {
+                    if (slots[i].item.itemName == _item.itemName)
+                    {
+                        slots[i].SetSlotCount(_count);
+                        return;
+                    }
+                }
+            }
+        }
+    
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].item == null)
+            {
+                slots[i].AddItem(_item, _count);
+                return;
+            }
+        }
+    }
+
+ }
+
+```
+
+게임내 인벤토리 내 아이템을 표시하는 슬롯에 해당하는 부분입니다.
+```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Slot : MonoBehaviour
+{
+
+    
+    
+    public Item item; 
+    public int itemCount; 
+    public Image itemImage;
+
+    [SerializeField]
+    private Text text_Count;
+    [SerializeField]
+    private GameObject go_CountImage;
+
+
+
+    private void Start()
+    {
+        
+    }
+
+    private void SetColor(float _alpha)
+    {
+        Color color = itemImage.color;
+        color.a = _alpha;
+        itemImage.color = color;
+    }
+
+    public void AddItem(Item _item, int _count = 1)
+    {
+        item = _item;
+        itemCount = _count;
+        itemImage.sprite = item.itemImage;
+
+        if (item.itemType == Item.ItemType.Key)
+        {
+            go_CountImage.SetActive(true);
+            text_Count.text = itemCount.ToString();
+            //itemlist.Add(item);
+        }
+        else
+        {
+            text_Count.text = "0";
+            go_CountImage.SetActive(false);
+        }
+
+        SetColor(1);
+    }
+
+    public void SetSlotCount(int _count)
+    {
+        itemCount += _count;
+        text_Count.text = itemCount.ToString();
+
+        if (itemCount <= 0)
+            ClearSlot();
+    }
+    
+    public void ClearSlot()
+    {
+        item = null;
+        itemCount = 0;
+        itemImage.sprite = null;
+        SetColor(0);
+
+        text_Count.text = "0";
+        go_CountImage.SetActive(false);
+    }
+
+}
+```
+
+
+```C#
+
+```
