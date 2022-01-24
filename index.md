@@ -232,7 +232,8 @@ public class Inventory : MonoBehaviour
 
 ```
 
-게임내 인벤토리 내 아이템을 표시하는 슬롯에 해당하는 부분입니다.
+- 게임내 인벤토리 내 아이템을 표시하는 슬롯에 해당하는 부분입니다.
+
 ```C#
 using System.Collections;
 using System.Collections.Generic;
@@ -312,6 +313,7 @@ public class Slot : MonoBehaviour
 ```
 
 - 카메라 시점에서 화면상 오브젝트 와 상호작용을 하는 부분입니다.
+
 ```C#
 using System.Collections;
 using System.Collections.Generic;
@@ -401,6 +403,7 @@ public class ActionController : MonoBehaviour
 ```
 
 - 두번 째 문 구현입니다.
+
 ```C#
 using System.Collections;
 using System.Collections.Generic;
