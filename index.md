@@ -396,3 +396,62 @@ public class ActionController : MonoBehaviour
 }
 
 ```
+
+- 두번 째 문 구현입니다.
+```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Door : MonoBehaviour
+{
+    public GameObject OnePuzzle;
+    public GameObject OnePuzzlesub;
+
+
+    private Animator animator;
+
+    private void Awake()
+
+    {
+
+        animator = GetComponent<Animator>();
+
+    }
+
+
+    public void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (Input.GetKeyDown(KeyCode.T) && GetPuzzle())
+            {          
+                for (int i = 0; i < Inventory.slots.Length; i++)
+                {
+
+                    if (Item.ItemType.PuzzleONE == Inventory.slots[i].item.itemType)
+                    {
+                        OnePuzzle.SetActive(false);
+                        OnePuzzlesub.SetActive(true);
+                        animator.SetTrigger("PuzzleCheck");
+                        Inventory.slots[i].SetSlotCount(-1);
+                    }
+                }
+
+            }         
+        }
+    }
+    public bool GetPuzzle()
+    {
+        for (int i = 0; i < Inventory.slots.Length; i++)
+        {
+            if (Inventory.slots[i] != null && Item.ItemType.PuzzleONE == Inventory.slots[i].item.itemType)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
+```
