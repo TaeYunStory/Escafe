@@ -25,11 +25,10 @@ public class Intro : MonoBehaviour
 {
     public float LimitTime;
     public Text text_Timer;
-    public Text text_Story; // 수정
+    public Text text_Story;
     public Text text_Skip;
 
 
-    //변수가 앞 함수가 뒤
     void Start() {
         //text_Story.text = "2008년 xx국에서 생체 실험을 한다는 첩보를 듣고 생체 병기 탈환을 위한 침투 작전 중 사로잡히고 말았다. 
         방송소리에 정신을 차려보니 실험실은 붕괴 중이다. 이곳을 빠져 나가 구출해주러온 요원들과 접선하라!";
@@ -309,7 +308,91 @@ public class Slot : MonoBehaviour
 }
 ```
 
-
+- 카메라 시점에서 화면상 오브젝트 와 상호작용을 하는 부분입니다.
 ```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ActionController : MonoBehaviour
+{
+    [SerializeField]
+    private float range;  // 아이템 습득이 가능한 최대 거리
+
+    private bool pickupActivated = false;  
+    private RaycastHit hitInfo; 
+
+    [SerializeField]
+    private LayerMask layerMask; 
+
+    [SerializeField]
+    private Text actionText;  
+    [SerializeField]
+    private Inventory theInventory;
+
+    AudioSource audiosrc3;
+
+    void Start()
+    {
+        audiosrc3 = GetComponent<AudioSource>();
+    }
+
+    void Update()
+    {
+        CheckItem();
+        TryAction();
+    }
+
+    private void TryAction()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            CheckItem();
+            CanPickUp();
+        }
+    }
+
+    private void CheckItem()
+    {
+        if (Physics.Raycast(transform.position, transform.forward, out hitInfo, range, layerMask))
+        {
+            if (hitInfo.transform.tag == "Item")
+            {
+                ItemInfoAppear();
+            }
+        }
+        else
+            ItemInfoDisappear();
+    }
+
+    private void ItemInfoAppear()
+    {
+        pickupActivated = true;
+        actionText.gameObject.SetActive(true);
+        actionText.text = hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득 " + "<color=yellow>" + "(T)" + "</color>";
+    }
+
+    private void ItemInfoDisappear()
+    {
+        pickupActivated = false;
+        actionText.gameObject.SetActive(false);
+    }
+
+    private void CanPickUp()
+    {
+        if (pickupActivated)
+        {
+            if (hitInfo.transform != null)
+            {
+                //Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득 했습니다.");
+                audiosrc3.Play();
+                theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);
+                Destroy(hitInfo.transform.gameObject);
+                ItemInfoDisappear();
+            }
+        }
+    }
+}
 
 ```
