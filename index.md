@@ -323,8 +323,7 @@ using UnityEngine.UI;
 public class ActionController : MonoBehaviour
 {
     [SerializeField]
-    private float range;  // 아이템 습득이 가능한 최대 거리
-
+    private float range;
     private bool pickupActivated = false;  
     private RaycastHit hitInfo; 
 
